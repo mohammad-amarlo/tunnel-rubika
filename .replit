@@ -1,0 +1,7 @@
+run = "python3 server.py"
+
+[env]
+PYTHONUNBUFFERED = "1"
+
+[packager]
+language = "python3"
