@@ -1,0 +1,15 @@
+app = "rubika-tunnel"
+primary_region = "fra"
+
+[env]
+PYTHONUNBUFFERED = "1"
+
+[build]
+builder = "paketobuildpacks/builder:base"
+
+[processes]
+app = "python server.py"
+
+[http_service]
+internal_port = 8080
+force_https = true
