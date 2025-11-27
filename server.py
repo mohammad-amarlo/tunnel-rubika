@@ -1,26 +1,29 @@
+import os
 import asyncio
 import websockets
-import os
 
-RUBIKA_WS = os.getenv("RUBIKA_WS")
+RUBIKA_WS = os.environ.get("RUBIKA_WS")
 
-async def handler(client_ws, _path):
+async def tunnel(ws, path):
     try:
         async with websockets.connect(RUBIKA_WS) as rubika_ws:
-            async def c2r():
-                async for msg in client_ws:
-                    await rubika_ws.send(msg)
-            async def r2c():
-                async for msg in rubika_ws:
-                    await client_ws.send(msg)
-            await asyncio.gather(c2r(), r2c())
+            async def ws_to_rubika():
+                async for message in ws:
+                    await rubika_ws.send(message)
+
+            async def rubika_to_ws():
+                async for message in rubika_ws:
+                    await ws.send(message)
+
+            await asyncio.gather(ws_to_rubika(), rubika_to_ws())
+
     except Exception as e:
-        print("Error:", e)
+        print("Tunnel error:", e)
 
 async def main():
-    port = int(os.getenv("PORT", 8000))
-    async with websockets.serve(handler, "0.0.0.0", port):
-        print("Tunnel server running on port", port)
+    port = int(os.environ.get("PORT", 8080))
+    print(f"Starting WebSocket tunnel on port {port}")
+    async with websockets.serve(tunnel, "0.0.0.0", port):
         await asyncio.Future()
 
 asyncio.run(main())
