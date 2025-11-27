@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: rubika-tunnel
+    env: python
+    buildCommand: ""
+    startCommand: python server.py
+    envVars:
+      - key: RUBIKA_WS
+        value: wss://messenger.rubika.ir/ws?token=BEHIG0TFMVQUKAXJIOXBCFMLQDZJWBJKOKVRSOMJXZCAZHQOGVVSOGUAEUZQVDOM
